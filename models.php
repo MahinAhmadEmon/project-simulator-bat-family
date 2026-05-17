@@ -124,4 +124,51 @@ function getPendingPosts($conn) {
     $r = mysqli_query($conn, "SELECT id, title, country, scout_id, status FROM posts WHERE status = 'pending' ORDER BY created_at DESC");
     return mysqli_fetch_all($r, MYSQLI_ASSOC);
 }
+
+/* ------------------- Wishlist ------------------- */
+function addToWishlist($conn, $userId, $postId) {
+    $check = mysqli_prepare($conn, "SELECT id FROM wishlist WHERE user_id = ? AND post_id = ?");
+    mysqli_stmt_bind_param($check, 'ii', $userId, $postId);
+    mysqli_stmt_execute($check);
+    $exists = mysqli_num_rows(mysqli_stmt_get_result($check)) > 0;
+    mysqli_stmt_close($check);
+    if ($exists) return false;
+
+    $stmt = mysqli_prepare($conn, "INSERT INTO wishlist (user_id, post_id) VALUES (?, ?)");
+    mysqli_stmt_bind_param($stmt, 'ii', $userId, $postId);
+    $ok = mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+    return $ok;
+}
+
+function removeFromWishlist($conn, $userId, $postId) {
+    $stmt = mysqli_prepare($conn, "DELETE FROM wishlist WHERE user_id = ? AND post_id = ?");
+    mysqli_stmt_bind_param($stmt, 'ii', $userId, $postId);
+    $ok = mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+    return $ok;
+}
+
+function isInWishlist($conn, $userId, $postId) {
+    $stmt = mysqli_prepare($conn, "SELECT id FROM wishlist WHERE user_id = ? AND post_id = ?");
+    mysqli_stmt_bind_param($stmt, 'ii', $userId, $postId);
+    mysqli_stmt_execute($stmt);
+    $exists = mysqli_num_rows(mysqli_stmt_get_result($stmt)) > 0;
+    mysqli_stmt_close($stmt);
+    return $exists;
+}
+
+function getUserWishlist($conn, $userId) {
+    $stmt = mysqli_prepare($conn,
+        "SELECT w.id, w.added_at, p.id as post_id, p.title, p.country, p.genre, p.cost_level
+         FROM wishlist w
+         JOIN posts p ON w.post_id = p.id
+         WHERE w.user_id = ?
+         ORDER BY w.added_at DESC");
+    mysqli_stmt_bind_param($stmt, 'i', $userId);
+    mysqli_stmt_execute($stmt);
+    $rows = mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
+    mysqli_stmt_close($stmt);
+    return $rows;
+}
 ?>
