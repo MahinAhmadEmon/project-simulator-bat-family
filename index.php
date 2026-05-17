@@ -16,6 +16,22 @@ if ($page === 'logout') {
     exit;
 }
 
+/* ------------- AJAX Endpoints ------------- */
+if ($page === 'ajax') {
+    $type = $_GET['type'] ?? '';
+    if ($type === 'wishlist-add') {
+        ajaxWishlistAdd($conn);
+    } elseif ($type === 'wishlist-remove') {
+        ajaxWishlistRemove($conn);
+    } elseif ($type === 'wishlist-check') {
+        ajaxWishlistCheck($conn);
+    } else {
+        http_response_code(404);
+        echo json_encode(['error' => 'Not found']);
+    }
+    exit;
+}
+
 /* ------------- Auth gates ------------- */
 $publicPages = ['login', 'register'];
 
@@ -37,6 +53,7 @@ if (!isset($_SESSION['user'])) {
     
 if ($page === 'home')     homeCtrl($conn);
 elseif ($page === 'profile')  profileCtrl($conn);
+elseif ($page === 'wishlist') wishlistCtrl($conn);
 else {
     header('Location: index.php?page=home');
     exit;

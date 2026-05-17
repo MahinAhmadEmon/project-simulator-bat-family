@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="auth-style.css">
 </head>
 <body class="app-body">
+<?php $user = $_SESSION['user'] ?? null; ?>
 
 <!-- Navbar -->
 <header class="navbar">
@@ -24,6 +25,7 @@
                 </span>
             </span>
             <a href="index.php?page=profile" class="btn btn-small">Profile</a>
+            <a href="index.php?page=wishlist" class="btn btn-small">Wishlist</a>
             <a href="index.php?page=logout" class="btn-logout">Logout</a>
         </div>
     </div>
@@ -89,5 +91,57 @@
 <footer class="footer">
     <p>&copy; <?= date('Y') ?> Travel Guide. All rights reserved.</p>
 </footer>
+
+<script>
+(function() {
+    const endpoint = 'index.php?page=ajax';
+    const buttons = document.querySelectorAll('.wishlist-toggle');
+    if (!buttons.length) return;
+
+    function updateButton(btn, saved) {
+        btn.classList.toggle('saved', saved);
+        btn.textContent = saved ? '💾 Saved' : '💾 Save';
+    }
+
+    async function postAction(type, postId) {
+        const res = await fetch(endpoint + '&type=' + type, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({post_id: Number(postId)})
+        });
+        return res.json();
+    }
+
+    buttons.forEach(btn => {
+        const postId = btn.dataset.postId;
+        if (!postId) return;
+
+        postAction('wishlist-check', postId).then(data => {
+            if (data && data.in_wishlist) {
+                updateButton(btn, true);
+            }
+        }).catch(() => {});
+
+        btn.addEventListener('click', async function() {
+            const isSaved = btn.classList.contains('saved');
+            const type = isSaved ? 'wishlist-remove' : 'wishlist-add';
+            btn.disabled = true;
+
+            try {
+                const data = await postAction(type, postId);
+                if (data && data.success) {
+                    updateButton(btn, !isSaved);
+                } else {
+                    alert(data.error || 'Unable to update wishlist.');
+                }
+            } catch (error) {
+                alert('Unable to update wishlist.');
+            } finally {
+                btn.disabled = false;
+            }
+        });
+    });
+})();
+</script>
 </body>
 </html>

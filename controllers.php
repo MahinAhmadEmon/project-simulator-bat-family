@@ -76,6 +76,99 @@ function homeCtrl($conn) {
     require 'views/home.php';
 }
 
+/* ============== Wishlist ============== */
+function wishlistCtrl($conn) {
+    if (!isset($_SESSION['user'])) {
+        header('Location: index.php?page=login');
+        exit;
+    }
+
+    $user   = $_SESSION['user'];
+    $userId = $user['id'];
+    $items  = getUserWishlist($conn, $userId);
+
+    require 'views/wishlist.php';
+}
+
+/* ============== AJAX: Wishlist Add ============== */
+function ajaxWishlistAdd($conn) {
+    header('Content-Type: application/json');
+    if (!isset($_SESSION['user'])) {
+        http_response_code(401);
+        echo json_encode(['error' => 'Not logged in']);
+        exit;
+    }
+
+    $data   = json_decode(file_get_contents('php://input'), true);
+    $postId = $data['post_id'] ?? 0;
+    $userId = $_SESSION['user']['id'];
+
+    if ($postId <= 0) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid post ID']);
+        exit;
+    }
+
+    if (addToWishlist($conn, $userId, $postId)) {
+        echo json_encode(['success' => true, 'message' => 'Added to wishlist']);
+    } else {
+        http_response_code(400);
+        echo json_encode(['error' => 'Already in wishlist or failed']);
+    }
+    exit;
+}
+
+/* ============== AJAX: Wishlist Remove ============== */
+function ajaxWishlistRemove($conn) {
+    header('Content-Type: application/json');
+    if (!isset($_SESSION['user'])) {
+        http_response_code(401);
+        echo json_encode(['error' => 'Not logged in']);
+        exit;
+    }
+
+    $data   = json_decode(file_get_contents('php://input'), true);
+    $postId = $data['post_id'] ?? 0;
+    $userId = $_SESSION['user']['id'];
+
+    if ($postId <= 0) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid post ID']);
+        exit;
+    }
+
+    if (removeFromWishlist($conn, $userId, $postId)) {
+        echo json_encode(['success' => true, 'message' => 'Removed from wishlist']);
+    } else {
+        http_response_code(400);
+        echo json_encode(['error' => 'Failed to remove']);
+    }
+    exit;
+}
+
+/* ============== AJAX: Wishlist Check ============== */
+function ajaxWishlistCheck($conn) {
+    header('Content-Type: application/json');
+    if (!isset($_SESSION['user'])) {
+        http_response_code(401);
+        echo json_encode(['error' => 'Not logged in']);
+        exit;
+    }
+
+    $data   = json_decode(file_get_contents('php://input'), true);
+    $postId = $data['post_id'] ?? 0;
+    $userId = $_SESSION['user']['id'];
+
+    if ($postId <= 0) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid post ID']);
+        exit;
+    }
+
+    echo json_encode(['in_wishlist' => isInWishlist($conn, $userId, $postId)]);
+    exit;
+}
+
 function profileCtrl($conn) {
     if (!isset($_SESSION['user'])) {
         header('Location: index.php?page=login');
