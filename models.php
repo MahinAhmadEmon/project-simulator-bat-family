@@ -97,4 +97,31 @@ function rejectUser($conn, $userId) {
     mysqli_stmt_close($stmt);
     return $ok;
 }
+
+
+function getApprovedPosts($conn, $limit = 6, $offset = 0) {
+    $stmt = mysqli_prepare($conn,
+        "SELECT id, title, country, genre, cost_level, short_history, created_at
+         FROM posts WHERE status = 'approved'
+         ORDER BY created_at DESC LIMIT ? OFFSET ?");
+    mysqli_stmt_bind_param($stmt, 'ii', $limit, $offset);
+    mysqli_stmt_execute($stmt);
+    $rows = mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
+    mysqli_stmt_close($stmt);
+    return $rows;
+}
+
+function getPostById($conn, $id) {
+    $stmt = mysqli_prepare($conn, "SELECT * FROM posts WHERE id = ?");
+    mysqli_stmt_bind_param($stmt, 'i', $id);
+    mysqli_stmt_execute($stmt);
+    $row = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+    mysqli_stmt_close($stmt);
+    return $row;
+}
+
+function getPendingPosts($conn) {
+    $r = mysqli_query($conn, "SELECT id, title, country, scout_id, status FROM posts WHERE status = 'pending' ORDER BY created_at DESC");
+    return mysqli_fetch_all($r, MYSQLI_ASSOC);
+}
 ?>
