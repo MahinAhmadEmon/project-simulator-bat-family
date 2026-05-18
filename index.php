@@ -16,14 +16,14 @@ if ($page === 'logout') {
     exit;
 }
 
-/* ------------- AJAX endpoint ------------- */
-// if ($page === 'ajax') {
-//     ajaxCtrl($conn);
-//     exit;
-// }
-
 /* ------------- Dispatch ------------- */
 switch ($page) {
+    case 'scout':
+        scoutCtrl($conn);
+        exit;
+    case 'admin':
+        adminCtrl($conn);
+        exit;
     case 'browse':
         browseCtrl($conn);
         exit;

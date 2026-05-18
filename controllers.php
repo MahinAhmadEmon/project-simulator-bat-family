@@ -32,7 +32,8 @@ function loginCtrl($conn) {
                 ];
                 if ($remember) setcookie('remember_email', $email, time() + 86400 * 30, '/');
                 else setcookie('remember_email', '', time() - 3600, '/');
-                header('Location: index.php?page=browse');
+                $goto = $user['role'] == 'user' ? 'browse' : $user['role'];
+                header('Location: index.php?page='.$goto);
             } else {
                 $error = 'Invalid email or password.';
             }
