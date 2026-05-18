@@ -24,20 +24,14 @@ if ($page === 'logout') {
 
 /* ------------- Dispatch ------------- */
 switch ($page) {
-    case 'login':
-        loginCtrl($conn);
-        break;
     case 'browse':
         browseCtrl($conn);
-        break;
+        exit;
     case 'detail':
         detailCtrl($conn);
-        break;
+        exit;
     case 'featured':
         featuredCtrl($conn);
-        break;
-    default:
-        header('Location: index.php?page=browse');
         exit;
 }
 

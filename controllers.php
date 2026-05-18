@@ -33,7 +33,9 @@ function loginCtrl($conn) {
                 if ($remember) setcookie('remember_email', $email, time() + 86400 * 30, '/');
                 else setcookie('remember_email', '', time() - 3600, '/');
                 header('Location: index.php?page=browse');
-            $error = 'Please fill in both fields.';
+            } else {
+                $error = 'Invalid email or password.';
+            }
         }
     }
 
@@ -210,7 +212,7 @@ function featuredCtrl($conn)
     $comments = array_reverse($_SESSION[$ck]);
     require 'views/featured_detail.php';
 }
-?>
+
 function registerCtrl($conn) {
     $error = $success = '';
     $old   = ['name' => '', 'email' => '', 'role' => 'user'];
