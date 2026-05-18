@@ -19,6 +19,13 @@ if ($page === 'logout') {
 /* ------------- AJAX Endpoints ------------- */
 if ($page === 'ajax') {
     $type = $_GET['type'] ?? '';
+    
+    // Admin AJAX
+    if (isset($_GET['admin']) && $_GET['admin'] === '1') {
+        adminAjax($conn);
+        exit;
+    }
+    
     if ($type === 'wishlist-add') {
         ajaxWishlistAdd($conn);
     } elseif ($type === 'wishlist-remove') {
@@ -54,6 +61,7 @@ if (!isset($_SESSION['user'])) {
 if ($page === 'home')     homeCtrl($conn);
 elseif ($page === 'profile')  profileCtrl($conn);
 elseif ($page === 'wishlist') wishlistCtrl($conn);
+elseif ($page === 'admin')    adminCtrl($conn);
 else {
     header('Location: index.php?page=home');
     exit;
