@@ -8,7 +8,7 @@ function postImage($genre)
     $g = strtolower(trim($genre));
     $allowed = ['beach', 'mountain', 'city', 'historical'];
     if (!in_array($g, $allowed, true)) $g = 'default';
-    return 'public/images/' . $g . '.svg';
+    return 'images/' . $g . '.svg';
 }
 ?>
 
@@ -42,7 +42,6 @@ function postImage($genre)
 
     <header class="hero">
         <div class="hero-content">
-            <span class="eyebrow">Task 4 · General User Module</span>
             <h1>Find your next travel destination</h1>
             <p>Browse approved places, search with AJAX filters, read details, comment, and estimate probable tour cost.</p>
             <div class="hero-actions">
@@ -152,7 +151,7 @@ function postImage($genre)
                                 data-genre="<?php echo e($genre); ?>"
                                 data-cost="<?php echo e($d['cost_level']); ?>"
                                 data-title="<?php echo e($d['title']); ?>">
-                                <img class="post-img" src="public/images/<?php echo $imgSrc; ?>.svg" alt="<?php echo e($genre); ?> place image">
+                                <img class="post-img" src="images/<?php echo $imgSrc; ?>.svg" alt="<?php echo e($genre); ?> place image">
                                 <div class="post-body">
                                     <div class="post-tags">
                                         <span><?php echo e($d['country']); ?></span>
@@ -162,7 +161,7 @@ function postImage($genre)
                                     </div>
                                     <h3><?php echo e($d['title']); ?></h3>
                                     <p><?php echo e(substr($d['short_history'], 0, 130)); ?>...</p>
-                                    <a class="read-link" href="index.php?page=featured&dest=<?php echo $key; ?>">Read More →</a>
+                                    <a class="read-link" href="index.php?page=featured&dest=<?php echo $d['id']; ?>">Read More →</a>
                                 </div>
                             </article>
                         <?php endforeach; ?>
@@ -173,7 +172,7 @@ function postImage($genre)
         </div>
     </section>
 
-    <footer class="footer">Travel Guide Task 4 · Student ID: 23-54508-3</footer>
+    <footer class="footer">@ Travel Guide. All rights reserved.</footer>
 
     <script>
         const postGrid = document.getElementById('postGrid');
@@ -190,7 +189,7 @@ function postImage($genre)
         function imageForGenre(genre) {
             const g = (genre || '').toLowerCase();
             const allowed = ['beach', 'mountain', 'city', 'historical'];
-            return 'public/images/' + (allowed.includes(g) ? g : 'default') + '.svg';
+            return 'images/' + (allowed.includes(g) ? g : 'default') + '.svg';
         }
 
         function renderPosts(posts) {

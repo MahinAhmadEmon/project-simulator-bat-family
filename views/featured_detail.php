@@ -9,7 +9,7 @@ function featImage($genre)
     $g = strtolower(trim($genre));
     $allowed = ['beach', 'mountain', 'city', 'historical'];
     if (!in_array($g, $allowed, true)) $g = 'default';
-    return 'public/images/' . $g . '.svg';
+    return 'images/' . $g . '.svg';
 }
 ?>
 <!DOCTYPE html>
@@ -133,7 +133,7 @@ function featImage($genre)
         </section>
     </main>
 
-    <footer class="footer">Travel Guide</footer>
+    <footer class="footer">@ Travel Guide. All rights reserved.</footer>
 
     <script>
         function calculateCost() {

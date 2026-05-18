@@ -9,7 +9,7 @@ function detailImage($genre)
     $g = strtolower(trim($genre));
     $allowed = ['beach', 'mountain', 'city', 'historical'];
     if (!in_array($g, $allowed, true)) $g = 'default';
-    return 'public/images/' . $g . '.svg';
+    return 'images/' . $g . '.svg';
 }
 ?>
 
@@ -127,7 +127,7 @@ function detailImage($genre)
         </section>
     </main>
 
-    <footer class="footer">Travel Guide </footer>
+    <footer class="footer">@ Travel Guide. All rights reserved. </footer>
 
     <script>
         // 1. Safe HTML Escaping Helper function to prevent XSS
