@@ -325,7 +325,7 @@ function scoutCtrl($conn) {
             }
             mysqli_stmt_close($stmt);
         } else {
-            $error = "Please fix the errors below.";
+            $error = "Please fill the required fields";
         }
     }
     
@@ -434,7 +434,7 @@ function scoutRequestsCtrl($conn) {
             }
             mysqli_stmt_close($stmt);
         } else {
-            $error = "Please fix the errors below.";
+            $error = "Please fill the required fields";
             // Fetch the request again to show the edit form with errors
             $stmt = mysqli_prepare($conn, "SELECT * FROM post_requests WHERE id = ? AND scout_id = ? AND status = 'pending'");
             mysqli_stmt_bind_param($stmt, 'ii', $requestId, $scoutId);

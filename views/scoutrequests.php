@@ -5,7 +5,49 @@
     <title>My Requests - Scout Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background-color: #1900ff;
+    padding: 1rem 2rem;
+    margin: 0;
+    display: flex;
+    gap: 2rem;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+}
+
+.nav a {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.3s ease;
+    border-radius: 4px;
+}
+
+.nav a:hover {
+    background-color: #555;
+}
+
+body {
+    margin: 0;
+    padding-top: 70px; 
+    background: #3498db;
+}
+
+.container {
+    max-width: 90%;
+    margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    border: 1px solid #e0e0e0;
+}
         .requests-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         .requests-table th, .requests-table td { 
             border: 1px solid #ddd; 

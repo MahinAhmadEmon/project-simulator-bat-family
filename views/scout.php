@@ -3,26 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <title>Scout Dashboard - Travel Guide</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="scoutstyle.css">
     <style>
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input, .form-group select, .form-group textarea { 
-            width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; 
-        }
-        .form-group input.error, .form-group select.error, .form-group textarea.error {
-            border-color: #dc3545;
-            background-color: #fff8f8;
-        }
-        .alert { padding: 10px; margin-bottom: 20px; border-radius: 4px; }
-        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .error-text { color: #dc3545; font-size: 12px; margin-top: 5px; display: block; }
-        .post-list { margin-top: 30px; }
-        .post-item { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 4px; }
-        .status-pending { color: orange; }
-        .status-approved { color: green; }
-        .status-rejected { color: red; }
+    .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background-color: #1900ff;
+    padding: 1rem 2rem;
+    margin: 0;
+    display: flex;
+    gap: 2rem;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+}
+
+.nav a {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.3s ease;
+    border-radius: 4px;
+}
+
+.nav a:hover {
+    background-color: #555;
+}
+
+body {
+    margin: 0;
+    padding-top: 70px; 
+    background: #3498db;
+}
+
+.container {
+    max-width: 90%;
+    margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    border: 1px solid #e0e0e0;
+}
+
+.button{
+    background-color: #ffbb00;
+    height: 35px; 
+    padding: 0 20px; 
+    border: none; 
+    border-radius: 8px; 
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 400;
+}
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.form-group input.error,
+.form-group select.error,
+.form-group textarea.error {
+    border-color: #dc3545;
+    background-color: #fff8f8;
+}
+
+.alert {
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.error-text {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+.post-list {
+    margin-top: 30px;
+}
+
+.post-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.status-pending {
+    color: orange;
+}
+
+.status-approved {
+    color: green;
+}
+
+.status-rejected {
+    color: red;
+}
     </style>
 </head>
 <body>
@@ -106,7 +215,7 @@
                 <?php endif; ?>
             </div>
             
-            <button type="submit" name="submit_post_request">Submit Post Request</button>
+            <button type="submit" name="submit_post_request" class="button">Submit Post Request</button>
         </form>
         
 
