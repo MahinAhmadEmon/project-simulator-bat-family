@@ -32,6 +32,8 @@ if ($page === 'ajax') {
         ajaxWishlistRemove($conn);
     } elseif ($type === 'wishlist-check') {
         ajaxWishlistCheck($conn);
+    }elseif ($type === 'change-request') {
+        ajaxChangeRequest($conn);
     } else {
         http_response_code(404);
         echo json_encode(['error' => 'Not found']);
@@ -62,6 +64,9 @@ if ($page === 'home')     homeCtrl($conn);
 elseif ($page === 'profile')  profileCtrl($conn);
 elseif ($page === 'wishlist') wishlistCtrl($conn);
 elseif ($page === 'admin')    adminCtrl($conn);
+elseif ($page === 'scout') scoutCtrl($conn);
+elseif ($page === 'scoutrequests') scoutRequestsCtrl($conn);
+elseif ($page === 'scoutapprovedposts') approvedPostsCtrl($conn);
 else {
     header('Location: index.php?page=home');
     exit;
