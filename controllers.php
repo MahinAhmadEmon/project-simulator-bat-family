@@ -22,7 +22,11 @@ function loginCtrl($conn) {
                 ];
                 if ($remember) setcookie('remember_user', $email, time() + 86400 * 30, '/');
                 else           setcookie('remember_user', '', time() - 3600, '/');
-                header('Location: index.php?page=home');
+                if ($user['role'] === 'scout') {
+                    header('Location: index.php?page=scout');
+                } else {
+                    header('Location: index.php?page=home');
+                }
                 exit;
             }
             $error = 'Invalid email or password.';
@@ -231,3 +235,171 @@ function profileCtrl($conn) {
 
     require 'views/profile.php';
 }
+
+//Done by Ramim
+//Ramim change-1
+function scoutCtrl($conn) {
+    
+    if (!isset($_SESSION['user'])) {
+        header('Location: index.php?page=login');
+        exit;
+    }
+    
+    $user = $_SESSION['user'];
+    
+    // Only scouts and admins can access scout panel
+    if ($user['role'] !== 'scout' && $user['role'] !== 'admin') {
+        header('Location: index.php?page=home');
+        exit;
+    }
+    
+    // Get scout's posts
+    $scoutId = $user['id'];
+    $stmt = mysqli_prepare($conn, "SELECT * FROM posts WHERE scout_id = ? ORDER BY created_at DESC");
+    mysqli_stmt_bind_param($stmt, 'i', $scoutId);
+    mysqli_stmt_execute($stmt);
+    $posts = mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
+    mysqli_stmt_close($stmt);
+    
+    // Get pending requests
+    $stmt = mysqli_prepare($conn, "SELECT * FROM post_requests WHERE scout_id = ? ORDER BY requested_at DESC");
+    mysqli_stmt_bind_param($stmt, 'i', $scoutId);
+    mysqli_stmt_execute($stmt);
+    $requests = mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
+    mysqli_stmt_close($stmt);
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_post_request'])) {
+    $title = trim($_POST['title'] ?? '');
+    $short_history = trim($_POST['short_history'] ?? '');
+    $country = trim($_POST['country'] ?? '');
+    $genre = $_POST['genre'] ?? '';
+    $cost_level = $_POST['cost_level'] ?? '';
+    $travel_medium_info = trim($_POST['travel_medium_info'] ?? '');
+    
+    $errors = [];
+    
+    if (empty($title)) $errors[] = "Title is required";
+    if (empty($short_history)) $errors[] = "Short history is required";
+    if (empty($country)) $errors[] = "Country is required";
+    if (empty($genre)) $errors[] = "Genre is required";
+    if (empty($cost_level)) $errors[] = "Cost level is required";
+    if (empty($travel_medium_info)) $errors[] = "Travel medium info is required";
+    
+    if (empty($errors)) {
+        $post_data = json_encode([
+            'title' => $title,
+            'short_history' => $short_history,
+            'country' => $country,
+            'genre' => $genre,
+            'cost_level' => $cost_level,
+            'travel_medium_info' => $travel_medium_info
+        ]);
+        
+        $stmt = mysqli_prepare($conn, "INSERT INTO post_requests (scout_id, post_data, status) VALUES (?, ?, 'pending')");
+        mysqli_stmt_bind_param($stmt, 'is', $scoutId, $post_data);
+        
+        if (mysqli_stmt_execute($stmt)) {
+            $success = "Post request submitted successfully! Waiting for admin approval.";
+        } else {
+            $error = "Failed to submit request. Please try again.";
+        }
+        mysqli_stmt_close($stmt);
+        } else {
+        $error = implode(", ", $errors);
+        }
+}
+    
+    require 'views/scout.php';
+}
+
+//Ramim change-2
+function scoutRequestsCtrl($conn) {
+    if (!isset($_SESSION['user'])) {
+        header('Location: index.php?page=login');
+        exit;
+    }
+    
+    $user = $_SESSION['user'];
+    
+    // Only scouts and admins can access
+    if ($user['role'] !== 'scout' && $user['role'] !== 'admin') {
+        header('Location: index.php?page=home');
+        exit;
+    }
+    
+    $scoutId = $user['id'];
+    $message = '';
+    $error = '';
+    $editRequest = null;
+    
+    // Handle Edit - GET request to fetch data for editing
+    if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
+        $requestId = $_GET['edit'];
+        $stmt = mysqli_prepare($conn, "SELECT * FROM post_requests WHERE id = ? AND scout_id = ? AND status = 'pending'");
+        mysqli_stmt_bind_param($stmt, 'ii', $requestId, $scoutId);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $editRequest = mysqli_fetch_assoc($result);
+        mysqli_stmt_close($stmt);
+        
+        if (!$editRequest) {
+            $error = "Request not found or cannot be edited.";
+        }
+    }
+    
+    // Handle Update (POST)
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_request'])) {
+        $requestId = $_POST['request_id'];
+        $title = trim($_POST['title'] ?? '');
+        $short_history = trim($_POST['short_history'] ?? '');
+        $country = trim($_POST['country'] ?? '');
+        $genre = $_POST['genre'] ?? '';
+        $cost_level = $_POST['cost_level'] ?? '';
+        $travel_medium_info = trim($_POST['travel_medium_info'] ?? '');
+        
+        $post_data = json_encode([
+            'title' => $title,
+            'short_history' => $short_history,
+            'country' => $country,
+            'genre' => $genre,
+            'cost_level' => $cost_level,
+            'travel_medium_info' => $travel_medium_info
+        ]);
+        
+        $stmt = mysqli_prepare($conn, "UPDATE post_requests SET post_data = ? WHERE id = ? AND scout_id = ? AND status = 'pending'");
+        mysqli_stmt_bind_param($stmt, 'sii', $post_data, $requestId, $scoutId);
+        
+        if (mysqli_stmt_execute($stmt)) {
+            $message = "Request updated successfully!";
+            $editRequest = null;
+        } else {
+            $error = "Failed to update request.";
+        }
+        mysqli_stmt_close($stmt);
+    }
+    
+    // Handle Delete (POST for delete)
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_request'])) {
+        $requestId = $_POST['request_id'];
+        $stmt = mysqli_prepare($conn, "DELETE FROM post_requests WHERE id = ? AND scout_id = ? AND status = 'pending'");
+        mysqli_stmt_bind_param($stmt, 'ii', $requestId, $scoutId);
+        
+        if (mysqli_stmt_execute($stmt)) {
+            $message = "Request deleted successfully!";
+        } else {
+            $error = "Failed to delete request.";
+        }
+        mysqli_stmt_close($stmt);
+    }
+    
+    // Get all requests for this scout
+    $stmt = mysqli_prepare($conn, "SELECT * FROM post_requests WHERE scout_id = ? and status = 'pending' ORDER BY requested_at DESC");
+    mysqli_stmt_bind_param($stmt, 'i', $scoutId);
+    mysqli_stmt_execute($stmt);
+    $requests = mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
+    mysqli_stmt_close($stmt);
+    
+    require 'views/scoutrequests.php';
+}
+
+//Ramim till here

@@ -54,6 +54,8 @@ if (!isset($_SESSION['user'])) {
 if ($page === 'home')     homeCtrl($conn);
 elseif ($page === 'profile')  profileCtrl($conn);
 elseif ($page === 'wishlist') wishlistCtrl($conn);
+elseif ($page === 'scout') scoutCtrl($conn);
+elseif ($page === 'scoutrequests') scoutRequestsCtrl($conn);
 else {
     header('Location: index.php?page=home');
     exit;
