@@ -9,7 +9,7 @@ function detailImage($genre)
     $g = strtolower(trim($genre));
     $allowed = ['beach', 'mountain', 'city', 'historical'];
     if (!in_array($g, $allowed, true)) $g = 'default';
-    return 'images/' . $g . '.svg';
+    return 'images/' . $g . '.png';
 }
 ?>
 

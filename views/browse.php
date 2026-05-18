@@ -8,7 +8,7 @@ function postImage($genre)
     $g = strtolower(trim($genre));
     $allowed = ['beach', 'mountain', 'city', 'historical'];
     if (!in_array($g, $allowed, true)) $g = 'default';
-    return 'images/' . $g . '.svg';
+    return 'images/' . $g . '.png';
 }
 ?>
 
@@ -151,7 +151,7 @@ function postImage($genre)
                                 data-genre="<?php echo e($genre); ?>"
                                 data-cost="<?php echo e($d['cost_level']); ?>"
                                 data-title="<?php echo e($d['title']); ?>">
-                                <img class="post-img" src="images/<?php echo $imgSrc; ?>.svg" alt="<?php echo e($genre); ?> place image">
+                                <img class="post-img" src="images/<?php echo $imgSrc; ?>.png" alt="<?php echo e($genre); ?> place image">
                                 <div class="post-body">
                                     <div class="post-tags">
                                         <span><?php echo e($d['country']); ?></span>
@@ -189,7 +189,7 @@ function postImage($genre)
         function imageForGenre(genre) {
             const g = (genre || '').toLowerCase();
             const allowed = ['beach', 'mountain', 'city', 'historical'];
-            return 'images/' + (allowed.includes(g) ? g : 'default') + '.svg';
+            return 'images/' + (allowed.includes(g) ? g : 'default') + '.png';
         }
 
         function renderPosts(posts) {
@@ -293,7 +293,7 @@ function postImage($genre)
 
             const g = (d.genre || '').toLowerCase();
             const allowed = ['beach', 'mountain', 'city', 'historical'];
-            document.getElementById('modal-img').src = 'public/images/' + (allowed.includes(g) ? g : 'default') + '.svg';
+            document.getElementById('modal-img').src = 'public/images/' + (allowed.includes(g) ? g : 'default') + '.png';
             document.getElementById('modal-img').alt = d.genre + ' image';
 
             document.getElementById('modal-travelers').value = 1;
